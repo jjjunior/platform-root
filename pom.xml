@@ -1,36 +1,52 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- 📦 Identificação do projeto raíz -->
     <groupId>br.com.jstack.platform</groupId>
     <artifactId>platform-root</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.7-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <!-- 🧩 Módulos incluídos no build -->
     <modules>
-        <!-- Core BOM -->
+
+        <!-- 🎯 BOM com gerenciamento centralizado de dependências -->
         <module>platform-core</module>
 
-        <!-- Bibliotecas comuns -->
-<!--        <module>libs/audit-lib-spring</module>-->
-<!--        <module>libs/audit-lib-quarkus</module>-->
-<!--        <module>libs/audit-lib-micronaut</module>-->
-<!--        <module>libs/utils-lib</module>-->
+        <!-- 🧰 Bibliotecas comuns (comentadas por enquanto) -->
+        <!-- <module>libs/audit-lib-spring</module> -->
+        <!-- <module>libs/audit-lib-quarkus</module> -->
+        <!-- <module>libs/audit-lib-micronaut</module> -->
+        <!-- <module>libs/utils-lib</module> -->
 
-        <!-- Spring Boot Stack -->
-        <module>platform-core/spring-starter-atomic-parent</module>
-<!--        <module>spring-stack/spring-starter-orchestrator-parent</module>-->
-<!--        <module>spring-stack/spring-starter-events-parent</module>-->
+        <!-- ☕ Spring Boot Stack -->
+        <module>platform-core/starter-atomic-spring-boot</module>
+        <!-- <module>spring-stack/spring-starter-orchestrator-parent</module> -->
+        <!-- <module>spring-stack/spring-starter-events-parent</module> -->
 
-        <!-- Quarkus Stack -->
-<!--        <module>quarkus-stack/quarkus-starter-atomic-parent</module>-->
-<!--        <module>quarkus-stack/quarkus-starter-orchestrator-parent</module>-->
-<!--        <module>quarkus-stack/quarkus-starter-events-parent</module>-->
+        <!-- 🐹 Quarkus Stack -->
+        <!-- <module>quarkus-stack/quarkus-starter-atomic-parent</module> -->
+        <!-- <module>quarkus-stack/quarkus-starter-orchestrator-parent</module> -->
+        <!-- <module>quarkus-stack/quarkus-starter-events-parent</module> -->
 
-        <!-- Micronaut Stack -->
-<!--        <module>micronaut-stack/micronaut-starter-atomic-parent</module>-->
-<!--        <module>micronaut-stack/micronaut-starter-orchestrator-parent</module>-->
-<!--        <module>micronaut-stack/micronaut-starter-events-parent</module>-->
+        <!-- 🌱 Micronaut Stack -->
+        <!-- <module>micronaut-stack/micronaut-starter-atomic-parent</module> -->
+        <!-- <module>micronaut-stack/micronaut-starter-orchestrator-parent</module> -->
+        <!-- <module>micronaut-stack/micronaut-starter-events-parent</module> -->
+
     </modules>
+
+    <!-- 🚀 Repositório remoto para publicação via `mvn deploy` -->
+    <distributionManagement>
+        <repository>
+            <!-- ⚠️ O ID abaixo deve coincidir com o settings.xml -->
+            <id>jstack-br.com.jstack.platform</id>
+            <name>JStack CodeArtifact Maven repository</name>
+            <url>https://jstack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/br.com.jstack.platform/</url>
+        </repository>
+    </distributionManagement>
+
 </project>

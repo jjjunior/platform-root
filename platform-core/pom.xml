@@ -1,33 +1,39 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
+    <!-- Herda do projeto raiz (platform-root) -->
     <parent>
         <groupId>br.com.jstack.platform</groupId>
         <artifactId>platform-root</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>platform-core</artifactId>
     <packaging>pom</packaging>
 
+    <!-- 🔧 Propriedades centralizadas de versão -->
     <properties>
-        <jakarta.validation-api.version>3.1.1</jakarta.validation-api.version>
-        <swagger-models.version>2.2.20</swagger-models.version>
-        <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
-        <junit-jupiter.version>5.10.2</junit-jupiter.version>
-        <swagger-annotations.version>2.2.30</swagger-annotations.version>
-        <commons-lang3.version>3.14.0</commons-lang3.version>
-        <micrometer-registry-prometheus.version>1.12.5</micrometer-registry-prometheus.version>
-        <kafka-clients.version>3.8.0</kafka-clients.version>
-        <micronaut-platform.version>4.4.1</micronaut-platform.version>
+        <spring-boot.version>3.5.3</spring-boot.version>
         <quarkus-bom.version>3.11.1</quarkus-bom.version>
-        <spring-boot.version>3.4.5</spring-boot.version>
+        <micronaut-platform.version>4.4.1</micronaut-platform.version>
+
+        <kafka-clients.version>3.8.0</kafka-clients.version>
+        <micrometer-registry-prometheus.version>1.12.5</micrometer-registry-prometheus.version>
+        <commons-lang3.version>3.14.0</commons-lang3.version>
+        <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
+        <swagger-annotations.version>2.2.30</swagger-annotations.version>
+        <junit-jupiter.version>5.10.2</junit-jupiter.version>
+        <springdoc-openapi.version>2.8.9</springdoc-openapi.version>
     </properties>
 
+    <!-- 📦 Gerenciamento centralizado de dependências -->
     <dependencyManagement>
         <dependencies>
 
-            <!-- Spring Boot -->
+            <!-- ✅ Spring Boot BOM -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -36,7 +42,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Quarkus -->
+            <!-- ✅ Quarkus BOM -->
             <dependency>
                 <groupId>io.quarkus.platform</groupId>
                 <artifactId>quarkus-bom</artifactId>
@@ -45,7 +51,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Micronaut -->
+            <!-- ✅ Micronaut BOM -->
             <dependency>
                 <groupId>io.micronaut.platform</groupId>
                 <artifactId>micronaut-platform</artifactId>
@@ -54,42 +60,58 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Apache Kafka (comum a todas stacks) -->
+            <!-- 📡 Kafka - Comunicação assíncrona -->
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-clients</artifactId>
                 <version>${kafka-clients.version}</version>
             </dependency>
 
-            <!-- Observability / Telemetria -->
+            <!-- 📊 Observability / Prometheus -->
             <dependency>
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-registry-prometheus</artifactId>
                 <version>${micrometer-registry-prometheus.version}</version>
             </dependency>
 
-            <!-- Bibliotecas de utilidades comuns -->
+            <!-- 🧰 Utilitários -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
             </dependency>
 
+            <!-- 📦 OpenAPI / Serialização nullable -->
             <dependency>
                 <groupId>org.openapitools</groupId>
                 <artifactId>jackson-databind-nullable</artifactId>
                 <version>${jackson-databind-nullable.version}</version>
             </dependency>
 
-            <!-- Bibliotecas de Testes -->
+            <!-- 🧪 JUnit 5 para testes -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
                 <version>${junit-jupiter.version}</version>
             </dependency>
 
-
+            <!-- 📘 SpringDoc OpenAPI UI -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc-openapi.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
+
+    <!-- 🚀 Publicação do artefato no CodeArtifact da JStack -->
+    <distributionManagement>
+        <repository>
+            <id>jstack-br.com.jstack.platform</id>
+            <name>JStack CodeArtifact Maven repository</name>
+            <url>https://jstack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/br.com.jstack.platform/</url>
+        </repository>
+    </distributionManagement>
+
 </project>
