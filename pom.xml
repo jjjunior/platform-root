@@ -7,7 +7,7 @@
     <!-- 📦 Identificação do projeto raíz -->
     <groupId>br.com.jstack.platform</groupId>
     <artifactId>platform-root</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <packaging>pom</packaging>
 
     <!-- 🧩 Módulos incluídos no build -->

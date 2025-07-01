@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.com.jstack.platform</groupId>
         <artifactId>platform-core</artifactId>
-        <version>1.0.7</version>
+        <version>1.0.8</version>
     </parent>
 
     <artifactId>starter-atomic-spring-boot</artifactId>
@@ -82,6 +82,12 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>7.4</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -115,6 +121,7 @@
                             <delegatePattern>true</delegatePattern>
                             <interfaceOnly>true</interfaceOnly>
                             <useTags>${openapi.useTags}</useTags>
+                            <dateLibrary>java8-localdatetime</dateLibrary>
                         </configOptions>
                     </configuration>
                 </plugin>
@@ -136,6 +143,17 @@
                     <target>${java.version}</target>
                     <release>${java.version}</release>
                     <encoding>UTF-8</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
