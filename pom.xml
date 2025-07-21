@@ -4,45 +4,45 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- 📦 Identificação do projeto raíz -->
+    <!-- Project root identifier -->
     <groupId>br.com.jstack.platform</groupId>
     <artifactId>platform-root</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.11</version>
     <packaging>pom</packaging>
 
-    <!-- 🧩 Módulos incluídos no build -->
+    <!-- Modules included in the build -->
     <modules>
 
-        <!-- 🎯 BOM com gerenciamento centralizado de dependências -->
+        <!-- BOM for centralized dependency management -->
         <module>platform-core</module>
 
-        <!-- 🧰 Bibliotecas comuns (comentadas por enquanto) -->
+        <!-- Common shared libraries (currently commented) -->
         <!-- <module>libs/audit-lib-spring</module> -->
         <!-- <module>libs/audit-lib-quarkus</module> -->
         <!-- <module>libs/audit-lib-micronaut</module> -->
         <!-- <module>libs/utils-lib</module> -->
 
-        <!-- ☕ Spring Boot Stack -->
+        <!-- Spring Boot stack -->
         <module>platform-core/starter-atomic-spring-boot</module>
         <!-- <module>spring-stack/spring-starter-orchestrator-parent</module> -->
         <!-- <module>spring-stack/spring-starter-events-parent</module> -->
 
-        <!-- 🐹 Quarkus Stack -->
+        <!-- Quarkus stack -->
         <!-- <module>quarkus-stack/quarkus-starter-atomic-parent</module> -->
         <!-- <module>quarkus-stack/quarkus-starter-orchestrator-parent</module> -->
         <!-- <module>quarkus-stack/quarkus-starter-events-parent</module> -->
 
-        <!-- 🌱 Micronaut Stack -->
+        <!-- Micronaut stack -->
         <!-- <module>micronaut-stack/micronaut-starter-atomic-parent</module> -->
         <!-- <module>micronaut-stack/micronaut-starter-orchestrator-parent</module> -->
         <!-- <module>micronaut-stack/micronaut-starter-events-parent</module> -->
 
     </modules>
 
-    <!-- 🚀 Repositório remoto para publicação via `mvn deploy` -->
+    <!-- Remote repository for artifact deployment via `mvn deploy` -->
     <distributionManagement>
         <repository>
-            <!-- ⚠️ O ID abaixo deve coincidir com o settings.xml -->
+            <!-- The ID below must match the one defined in settings.xml -->
             <id>jstack-br.com.jstack.platform</id>
             <name>JStack CodeArtifact Maven repository</name>
             <url>https://jstack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/br.com.jstack.platform/</url>
