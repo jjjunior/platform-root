@@ -8,7 +8,7 @@
     <parent>
         <groupId>br.com.jstack.platform</groupId>
         <artifactId>platform-root</artifactId>
-        <version>1.0.11</version>
+        <version>1.0.13</version>
     </parent>
 
     <artifactId>platform-core</artifactId>

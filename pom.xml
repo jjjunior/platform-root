@@ -7,7 +7,7 @@
     <!-- Project root identifier -->
     <groupId>br.com.jstack.platform</groupId>
     <artifactId>platform-root</artifactId>
-    <version>1.0.11</version>
+    <version>1.0.13</version>
     <packaging>pom</packaging>
 
     <!-- Modules included in the build -->
@@ -40,13 +40,24 @@
     </modules>
 
     <!-- Remote repository for artifact deployment via `mvn deploy` -->
-    <distributionManagement>
+    <repositories>
         <repository>
-            <!-- The ID below must match the one defined in settings.xml -->
-            <id>jstack-br.com.jstack.platform</id>
-            <name>JStack CodeArtifact Maven repository</name>
+            <id>jstack-codeartifact</id>
+            <name>JStack CodeArtifact</name>
             <url>https://jstack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/br.com.jstack.platform/</url>
         </repository>
-    </distributionManagement>
+
+        <repository>
+            <id>micronaut</id>
+            <name>Micronaut Releases</name>
+            <url>https://s01.oss.sonatype.org/content/repositories/releases/</url>
+        </repository>
+
+        <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+    </repositories>
 
 </project>
