@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Parent POM from JStack Platform -->
+    <parent>
+        <groupId>br.com.jstack.platform</groupId>
+        <artifactId>core</artifactId>
+        <version>1.0.17</version>
+        <relativePath>../core/pom.xml</relativePath>
+    </parent>
+
+    <!-- Atomic Spring Boot module -->
+    <name>JStack Micronaut</name>
+    <artifactId>micronaut-stack</artifactId>
+    <packaging>pom</packaging>
+
+    <!-- Project-wide properties -->
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <micronaut-platform.version>4.9.1</micronaut-platform.version>
+
+    </properties>
+
+    <modules>
+        <module>starter-atomic-micronaut</module>
+    </modules>
+
+    <!-- Centralized dependency management -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Micronaut BOM -->
+            <dependency>
+                <groupId>io.micronaut.platform</groupId>
+                <artifactId>micronaut-platform</artifactId>
+                <version>${micronaut-platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Build configuration -->
+    <build>
+        <pluginManagement>
+
+        </pluginManagement>
+    </build>
+
+
+</project>

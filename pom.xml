@@ -4,60 +4,47 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Project root identifier -->
     <groupId>br.com.jstack.platform</groupId>
     <artifactId>platform-root</artifactId>
-    <version>1.0.13</version>
+    <version>1.0.17</version>
     <packaging>pom</packaging>
 
-    <!-- Modules included in the build -->
+    <name>JStack Platform</name>
+
     <modules>
-
-        <!-- BOM for centralized dependency management -->
-        <module>platform-core</module>
-
-        <!-- Common shared libraries (currently commented) -->
-        <!-- <module>libs/audit-lib-spring</module> -->
-        <!-- <module>libs/audit-lib-quarkus</module> -->
-        <!-- <module>libs/audit-lib-micronaut</module> -->
-        <!-- <module>libs/utils-lib</module> -->
-
-        <!-- Spring Boot stack -->
-        <module>platform-core/starter-atomic-spring-boot</module>
-        <!-- <module>spring-stack/spring-starter-orchestrator-parent</module> -->
-        <!-- <module>spring-stack/spring-starter-events-parent</module> -->
-
-        <!-- Quarkus stack -->
-        <!-- <module>quarkus-stack/quarkus-starter-atomic-parent</module> -->
-        <!-- <module>quarkus-stack/quarkus-starter-orchestrator-parent</module> -->
-        <!-- <module>quarkus-stack/quarkus-starter-events-parent</module> -->
-
-        <!-- Micronaut stack -->
-        <!-- <module>micronaut-stack/micronaut-starter-atomic-parent</module> -->
-        <!-- <module>micronaut-stack/micronaut-starter-orchestrator-parent</module> -->
-        <!-- <module>micronaut-stack/micronaut-starter-events-parent</module> -->
-
+        <module>core</module>
+        <module>spring-stack</module>
+        <module>micronaut-stack</module>
     </modules>
 
-    <!-- Remote repository for artifact deployment via `mvn deploy` -->
     <repositories>
+        <!-- Maven Central -->
         <repository>
-            <id>jstack-codeartifact</id>
-            <name>JStack CodeArtifact</name>
-            <url>https://jstack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/br.com.jstack.platform/</url>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
 
+        <!-- Micronaut Releases -->
         <repository>
-            <id>micronaut</id>
+            <id>micronaut-releases</id>
             <name>Micronaut Releases</name>
             <url>https://s01.oss.sonatype.org/content/repositories/releases/</url>
         </repository>
 
         <repository>
-            <id>central</id>
-            <name>Maven Central</name>
-            <url>https://repo.maven.apache.org/maven2</url>
+            <id>jstack-br.com.jstack.platform</id>
+            <name>JStack CodeArtifact Maven repository</name>
+            <url>https://jstack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/br.com.jstack.platform/</url>
         </repository>
+
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>jstack-br.com.jstack.platform</id>
+            <name>JStack CodeArtifact Maven repository</name>
+            <url>https://jstack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/br.com.jstack.platform/</url>
+        </repository>
+    </distributionManagement>
 
 </project>
