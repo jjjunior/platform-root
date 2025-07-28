@@ -1,0 +1,280 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Parent POM from JStack Platform -->
+    <parent>
+        <groupId>br.com.jstack.platform</groupId>
+        <artifactId>spring-stack</artifactId>
+        <version>1.0.35</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <!-- Atomic Spring Boot module -->
+    <name>JStack Spring Atomic</name>
+    <artifactId>starter-atomic-spring-boot</artifactId>
+    <packaging>pom</packaging>
+
+    <!-- Project-wide properties -->
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- OpenAPI Generator settings -->
+        <openapi.inputSpec>${project.basedir}/src/main/resources/swagger/openapi.yaml</openapi.inputSpec>
+        <openapi.generator.version>7.14.0</openapi.generator.version>
+        <openapi.generatorName>spring</openapi.generatorName>
+        <openapi.useTags>true</openapi.useTags>
+
+        <!-- MapStruct version -->
+        <mapstruct.version>1.6.3</mapstruct.version>
+    </properties>
+
+
+    <!-- Dependencies -->
+    <dependencies>
+        <!-- Spring Boot starters -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- OpenAPI and JSON serialization support -->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+
+        <!-- Development tools -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- MapStruct for DTO mapping -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+
+        <!-- PostgreSQL JDBC driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+
+        <!-- Liquibase for database migrations -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+
+        <!-- Logback encoder for structured JSON logs -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>7.4</version>
+        </dependency>
+    </dependencies>
+
+    <!-- Build configuration -->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- OpenAPI generator plugin -->
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openapi.generator.version}</version>
+                    <configuration>
+                        <inputSpec>${openapi.inputSpec}</inputSpec>
+                        <generatorName>${openapi.generatorName}</generatorName>
+                        <library>spring-boot</library>
+                        <apiPackage>${package}.api</apiPackage>
+                        <modelPackage>${package}.model</modelPackage>
+                        <output>${project.build.directory}/generated-sources/openapi</output>
+                        <generateSupportingFiles>true</generateSupportingFiles>
+                        <generateApiDocumentation>true</generateApiDocumentation>
+                        <configOptions>
+                            <basePackage>${package}</basePackage>
+                            <configPackage>${package}.config</configPackage>
+                            <useSpringBoot3>true</useSpringBoot3>
+                            <useJakartaEe>true</useJakartaEe>
+                            <useBeanValidation>true</useBeanValidation>
+                            <performBeanValidation>true</performBeanValidation>
+                            <openApiNullable>false</openApiNullable>
+                            <documentationProvider>springdoc</documentationProvider>
+                            <delegatePattern>true</delegatePattern>
+                            <interfaceOnly>true</interfaceOnly>
+                            <useTags>${openapi.useTags}</useTags>
+                            <dateLibrary>java8-localdatetime</dateLibrary>
+                        </configOptions>
+                    </configuration>
+                </plugin>
+
+                <!-- Adds custom source folders -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <!-- Java compiler plugin -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <release>${java.version}</release>
+                    <encoding>UTF-8</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <!-- Spring Boot repackage plugin -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <configuration>
+                    <mainClass>${package}.Application</mainClass>
+                    <excludeDevtools>false</excludeDevtools>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Liquibase plugin for DB migration -->
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>4.32.0</version>
+                <configuration>
+                    <propertyFile>src/main/resources/liquibase.properties</propertyFile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- Profile for OpenAPI code generation -->
+    <profiles>
+        <profile>
+            <id>openapi-autogen</id>
+            <properties>
+                <openapi.generator.version>7.14.0</openapi.generator.version>
+                <openapi.inputSpec>${project.basedir}/src/main/resources/api/contract/micronaut-api.yaml</openapi.inputSpec>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- OpenAPI Generator -->
+                    <plugin>
+                        <groupId>org.openapitools</groupId>
+                        <artifactId>openapi-generator-maven-plugin</artifactId>
+                        <version>${openapi.generator.version}</version>
+                        <executions>
+                            <execution>
+                                <id>generate-api</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>true</skip>
+                                    <inputSpec>${openapi.inputSpec}</inputSpec>
+                                    <generatorName>jaxrs-spec</generatorName>
+                                    <configOptions>
+                                        <sourceFolder>src/gen/java</sourceFolder>
+                                        <useTags>true</useTags>
+                                        <interfaceOnly>true</interfaceOnly>
+                                        <useJakartaEe>true</useJakartaEe>
+                                        <dateLibrary>java8</dateLibrary>
+                                    </configOptions>
+                                    <apiPackage>${package}.api</apiPackage>
+                                    <modelPackage>${package}.model</modelPackage>
+                                    <output>${project.build.directory}/generated-sources/openapi</output>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Adicionar as fontes geradas ao classpath -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>add-openapi-sources</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${project.build.directory}/generated-sources/openapi/src/gen/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+
+
+</project>

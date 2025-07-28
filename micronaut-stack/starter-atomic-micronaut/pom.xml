@@ -8,30 +8,68 @@
     <parent>
         <groupId>br.com.jstack.platform</groupId>
         <artifactId>micronaut-stack</artifactId>
-        <version>1.0.17</version>
+        <version>1.0.35</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <!-- Atomic Spring Boot module -->
     <name>JStack Micronaut Atomic</name>
     <artifactId>starter-atomic-micronaut</artifactId>
     <packaging>pom</packaging>
 
     <properties>
         <java.version>21</java.version>
+        <micronaut.version>4.9.1</micronaut.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <openapi.generator.version>7.14.0</openapi.generator.version>
+        <micronaut.openapi.version>6.5.0</micronaut.openapi.version>
         <package>br.com.jstack.micronaut.atomic</package>
+        <openapi.inputSpec>${project.basedir}/src/main/resources/swagger/openapi.yaml</openapi.inputSpec>
     </properties>
 
-
-    <!-- Dependencies -->
     <dependencies>
         <!-- Micronaut Core HTTP Server -->
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-http-server-netty</artifactId>
         </dependency>
+        <!-- Micronaut Core -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-runtime</artifactId>
+        </dependency>
+        <!-- Micronaut OpenAPI (Gera documentação e integra com Swagger UI) -->
+        <dependency>
+            <groupId>io.micronaut.openapi</groupId>
+            <artifactId>micronaut-openapi</artifactId>
+        </dependency>
+
+        <!-- Jackson para JSON -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-jackson-databind</artifactId>
+        </dependency>
+
+        <!-- Jakarta EE para validações e anotações -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+
+        <!-- Testes -->
+        <dependency>
+            <groupId>io.micronaut.test</groupId>
+            <artifactId>micronaut-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+
 
         <!-- Micronaut Data JPA -->
         <dependency>
@@ -51,10 +89,10 @@
             <artifactId>micronaut-management</artifactId>
         </dependency>
 
-        <!-- OpenAPI and Swagger UI for Micronaut -->
+        <!-- Micronaut JAX-RS Support -->
         <dependency>
-            <groupId>io.micronaut.openapi</groupId>
-            <artifactId>micronaut-openapi</artifactId>
+            <groupId>io.micronaut.jaxrs</groupId>
+            <artifactId>micronaut-jaxrs-server</artifactId>
         </dependency>
 
         <!-- PostgreSQL JDBC Driver -->
@@ -76,10 +114,47 @@
             <version>${mapstruct.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${mapstruct.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Annotation Processing for Micronaut and MapStruct -->
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-inject-java</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+        </dependency>
+
+        <!-- Micronaut Core -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-inject</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.micronaut.validation</groupId>
+            <artifactId>micronaut-validation-processor</artifactId>
+            <version>4.10.0</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.32</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -91,13 +166,6 @@
                 <groupId>io.micronaut.build</groupId>
                 <artifactId>micronaut-maven-plugin</artifactId>
                 <version>3.5.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>docker</goal> <!-- Usar se precisar empacotar imagem -->
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
             <!-- Maven Compiler with annotation processors -->
@@ -110,19 +178,154 @@
                     <target>${java.version}</target>
                     <annotationProcessorPaths>
                         <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.32</version>
+                        </path>
+                        <path>
                             <groupId>io.micronaut</groupId>
                             <artifactId>micronaut-inject-java</artifactId>
                             <version>${micronaut.version}</version>
                         </path>
                         <path>
+                            <groupId>io.micronaut.validation</groupId>
+                            <artifactId>micronaut-validation-processor</artifactId>
+                            <version>4.10.0</version>
+                        </path>
+                        <path>
                             <groupId>io.micronaut.openapi</groupId>
                             <artifactId>micronaut-openapi</artifactId>
-                            <version>${micronaut.version}</version>
+                            <version>${micronaut.openapi.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+
+            <!-- OpenAPI Generator Plugin -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi.generator.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-rest-api</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <skip>true</skip>
+                            <inputSpec>${openapi.inputSpec}</inputSpec>
+                            <generatorName>jaxrs-spec</generatorName>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <sourceFolder>src/gen/java</sourceFolder>
+                                <useTags>true</useTags>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useJakartaEe>true</useJakartaEe>
+                                <dateLibrary>java8-localdatetime</dateLibrary>
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>true</performBeanValidation>
+                                <useSwaggerAnnotations>false</useSwaggerAnnotations>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                            </configOptions>
+                            <apiPackage>${package}.api</apiPackage>
+                            <modelPackage>${package}.model</modelPackage>
+                            <output>${project.build.directory}/generated-sources/openapi</output>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Add generated sources -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>add-openapi-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/openapi/src/gen/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>openapi-autogen</id>
+            <properties>
+                <openapi.generator.version>7.14.0</openapi.generator.version>
+                <openapi.inputSpec>${project.basedir}/src/main/resources/api/contract/micronaut-api.yaml</openapi.inputSpec>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- OpenAPI Generator -->
+                    <plugin>
+                        <groupId>org.openapitools</groupId>
+                        <artifactId>openapi-generator-maven-plugin</artifactId>
+                        <version>${openapi.generator.version}</version>
+                        <executions>
+                            <execution>
+                                <id>generate-api</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${openapi.inputSpec}</inputSpec>
+                                    <generatorName>jaxrs-spec</generatorName>
+                                    <configOptions>
+                                        <sourceFolder>src/gen/java</sourceFolder>
+                                        <useTags>true</useTags>
+                                        <interfaceOnly>true</interfaceOnly>
+                                        <useJakartaEe>true</useJakartaEe>
+                                        <dateLibrary>java8-localdatetime</dateLibrary>
+                                    </configOptions>
+                                    <apiPackage>${package}.api</apiPackage>
+                                    <modelPackage>${package}.model</modelPackage>
+                                    <output>${project.build.directory}/generated-sources/openapi</output>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Adicionar as fontes geradas ao classpath -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>add-openapi-sources</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${project.build.directory}/generated-sources/openapi/src/gen/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
