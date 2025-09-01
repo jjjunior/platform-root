@@ -6,10 +6,15 @@
 
     <groupId>br.com.jstack.platform</groupId>
     <artifactId>platform-root</artifactId>
-    <version>1.0.35</version>
+    <version>1.0.71</version>
     <packaging>pom</packaging>
 
     <name>JStack Platform</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
 
     <modules>
         <module>core</module>

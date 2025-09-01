@@ -8,7 +8,7 @@
     <parent>
         <groupId>br.com.jstack.platform</groupId>
         <artifactId>spring-stack</artifactId>
-        <version>1.0.35</version>
+        <version>1.0.71</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -232,15 +232,15 @@
                                     <goal>generate</goal>
                                 </goals>
                                 <configuration>
-                                    <skip>true</skip>
                                     <inputSpec>${openapi.inputSpec}</inputSpec>
-                                    <generatorName>jaxrs-spec</generatorName>
+                                    <generatorName>${openapi.generatorName}</generatorName>
+                                    <library>spring-boot</library>
                                     <configOptions>
                                         <sourceFolder>src/gen/java</sourceFolder>
                                         <useTags>true</useTags>
                                         <interfaceOnly>true</interfaceOnly>
                                         <useJakartaEe>true</useJakartaEe>
-                                        <dateLibrary>java8</dateLibrary>
+                                        <dateLibrary>java8-localdatetime</dateLibrary>
                                     </configOptions>
                                     <apiPackage>${package}.api</apiPackage>
                                     <modelPackage>${package}.model</modelPackage>

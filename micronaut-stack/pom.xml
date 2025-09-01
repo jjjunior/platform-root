@@ -1,54 +1,146 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Parent POM from JStack Platform -->
     <parent>
         <groupId>br.com.jstack.platform</groupId>
         <artifactId>core</artifactId>
-        <version>1.0.35</version>
+        <version>1.0.71</version>
         <relativePath>../core/pom.xml</relativePath>
     </parent>
 
-    <!-- Atomic Spring Boot module -->
-    <name>JStack Micronaut</name>
     <artifactId>micronaut-stack</artifactId>
     <packaging>pom</packaging>
+    <name>JStack Micronaut Stack</name>
 
-    <!-- Project-wide properties -->
     <properties>
         <java.version>21</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <micronaut-platform.version>4.9.1</micronaut-platform.version>
+        <micronaut.version>4.9.1</micronaut.version>
+        <micronaut.openapi.version>6.5.0</micronaut.openapi.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <openapi.generator.version>7.14.0</openapi.generator.version>
     </properties>
 
     <modules>
         <module>starter-atomic-micronaut</module>
     </modules>
 
-    <!-- Centralized dependency management -->
     <dependencyManagement>
         <dependencies>
-            <!-- Micronaut BOM -->
+            <!-- Micronaut -->
             <dependency>
                 <groupId>io.micronaut.platform</groupId>
-                <artifactId>micronaut-platform</artifactId>
-                <version>${micronaut-platform.version}</version>
+                <artifactId>micronaut-parent</artifactId>
+                <version>${micronaut.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- MapStruct -->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Annotation Processors -->
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-inject-java</artifactId>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.micronaut.validation</groupId>
+                <artifactId>micronaut-validation-processor</artifactId>
+                <version>4.10.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.micronaut.openapi</groupId>
+                <artifactId>micronaut-openapi</artifactId>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <!-- Build configuration -->
     <build>
         <pluginManagement>
+            <plugins>
+                <!-- Micronaut Plugin -->
+                <plugin>
+                    <groupId>io.micronaut.build</groupId>
+                    <artifactId>micronaut-maven-plugin</artifactId>
+                </plugin>
 
+                <!-- Compiler Plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <release>${java.version}</release>
+                        <fork>true</fork>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>io.micronaut</groupId>
+                                <artifactId>micronaut-inject-java</artifactId>
+                                <version>${micronaut.version}</version>
+                            </path>
+                            <path>
+                                <groupId>io.micronaut.validation</groupId>
+                                <artifactId>micronaut-validation-processor</artifactId>
+                                <version>4.10.0</version>
+                            </path>
+                            <path>
+                                <groupId>io.micronaut.openapi</groupId>
+                                <artifactId>micronaut-openapi</artifactId>
+                                <version>${micronaut.openapi.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+
+                <!-- JAR Plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.4.2</version>
+                </plugin>
+
+                <!-- Shade Plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+
+                <!-- OpenAPI Generator -->
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openapi.generator.version}</version>
+                </plugin>
+
+                <!-- Build Helper -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+            </plugins>
         </pluginManagement>
     </build>
-
-
 </project>

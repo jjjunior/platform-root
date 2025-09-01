@@ -7,7 +7,7 @@
     <parent>
         <groupId>br.com.jstack.platform</groupId>
         <artifactId>platform-root</artifactId>
-        <version>1.0.35</version>
+        <version>1.0.71</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -18,11 +18,11 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-boot.version>3.5.4</spring-boot.version>
-        <micronaut.version>4.9.1</micronaut.version>
-        <quarkus.version>3.11.0</quarkus.version>
+        <spring-boot.version>3.5.5</spring-boot.version>
+        <micronaut.version>4.9.2</micronaut.version>
+        <quarkus.version>3.26.1</quarkus.version>
         <mapstruct.version>1.6.3</mapstruct.version>
-        <openapi.generator.version>7.14.0</openapi.generator.version>
+        <openapi.generator.version>7.15.0</openapi.generator.version>
     </properties>
 
     <dependencyManagement>
