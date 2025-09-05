@@ -6,7 +6,7 @@
 
     <groupId>br.com.jstack.platform</groupId>
     <artifactId>platform-root</artifactId>
-    <version>1.0.71</version>
+    <version>1.0.73</version>
     <packaging>pom</packaging>
 
     <name>JStack Platform</name>
