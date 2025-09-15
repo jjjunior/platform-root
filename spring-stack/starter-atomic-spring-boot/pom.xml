@@ -8,7 +8,7 @@
     <parent>
         <groupId>br.com.jstack.platform</groupId>
         <artifactId>spring-stack</artifactId>
-        <version>1.0.73</version>
+        <version>1.0.75</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -33,6 +33,8 @@
 
         <!-- MapStruct version -->
         <mapstruct.version>1.6.3</mapstruct.version>
+        <liquigraph.version>4.0.6</liquigraph.version>
+        <neo4jbolt.version>4.0.5</neo4jbolt.version>
     </properties>
 
 
@@ -54,6 +56,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!-- Neo4j -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-neo4j</artifactId>
         </dependency>
 
         <!-- OpenAPI and JSON serialization support -->
@@ -97,10 +104,22 @@
             <artifactId>postgresql</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-jdbc-bolt</artifactId>
+            <version>${neo4jbolt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Liquibase for database migrations -->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.liquigraph</groupId>
+            <artifactId>liquigraph-spring-boot-starter</artifactId>
+            <version>${liquigraph.version}</version>
         </dependency>
 
         <!-- Logback encoder for structured JSON logs -->
