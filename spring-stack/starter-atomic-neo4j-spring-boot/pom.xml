@@ -94,18 +94,22 @@
             <version>${mapstruct.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j-jdbc-bolt</artifactId>
-            <version>${neo4jbolt.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- Liquibase for database migrations -->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.liquibase.ext</groupId>
+            <artifactId>liquibase-neo4j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-jdbc</artifactId>
+        </dependency>
+
 
         <!-- Logback encoder for structured JSON logs -->
         <dependency>
@@ -205,7 +209,7 @@
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>4.32.0</version>
+                <version>4.33.0</version>
                 <configuration>
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
                 </configuration>
