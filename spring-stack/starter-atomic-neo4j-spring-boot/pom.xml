@@ -8,7 +8,7 @@
     <parent>
         <groupId>br.com.jstack.platform</groupId>
         <artifactId>spring-stack</artifactId>
-        <version>1.0.77</version>
+        <version>1.0.78</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -33,8 +33,9 @@
 
         <!-- MapStruct version -->
         <mapstruct.version>1.6.3</mapstruct.version>
-        <liquigraph.version>4.0.6</liquigraph.version>
-        <neo4jbolt.version>4.0.5</neo4jbolt.version>
+        <liquibase.version>4.31.1</liquibase.version>
+        <liquibase.neo4j.version>4.31.1</liquibase.neo4j.version>
+        <neo4j.jdbc.version>6.8.0</neo4j.jdbc.version>
     </properties>
 
 
@@ -103,11 +104,15 @@
         <dependency>
             <groupId>org.liquibase.ext</groupId>
             <artifactId>liquibase-neo4j</artifactId>
+            <version>${liquibase.neo4j.version}</version>
         </dependency>
 
+        <!-- Driver JDBC do Neo4j -->
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-jdbc</artifactId>
+            <version>${neo4j.jdbc.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
 
