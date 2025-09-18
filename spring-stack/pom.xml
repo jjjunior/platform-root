@@ -7,7 +7,7 @@
     <parent>
         <groupId>br.com.jstack.platform</groupId>
         <artifactId>core</artifactId>
-        <version>1.0.75</version>
+        <version>1.0.77</version>
         <relativePath>../core/pom.xml</relativePath>
     </parent>
 
@@ -16,7 +16,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>starter-atomic-spring-boot</module>
+        <module>starter-atomic-jpa-spring-boot</module>
+        <module>starter-atomic-neo4j-spring-boot</module>
     </modules>
 
     <dependencyManagement>
