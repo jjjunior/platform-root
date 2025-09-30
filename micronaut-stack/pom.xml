@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.com.jstack.platform</groupId>
         <artifactId>core</artifactId>
-        <version>1.0.82</version>
+        <version>1.0.83</version>
         <relativePath>../core/pom.xml</relativePath>
     </parent>
 
