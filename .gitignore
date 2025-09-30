@@ -24,3 +24,4 @@ buildNumber.properties
 /.idea/misc.xml
 /.idea/codeStyles/Project.xml
 /.idea/vcs.xml
+/micronaut-stack/starter-atomic-micronaut/target/starter-atomic-micronaut-1.0.82-shaded.pom
