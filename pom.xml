@@ -6,7 +6,7 @@
 
     <groupId>br.com.jstack.platform</groupId>
     <artifactId>platform-root</artifactId>
-    <version>1.0.83</version>
+    <version>1.0.84</version>
     <packaging>pom</packaging>
 
     <name>JStack Platform</name>
@@ -20,6 +20,7 @@
         <module>core</module>
         <module>spring-stack</module>
         <module>micronaut-stack</module>
+        <module>spring-stack/starter-security-spring-boot</module>
     </modules>
 
     <repositories>
