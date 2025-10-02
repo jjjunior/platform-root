@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -7,7 +7,7 @@
     <parent>
         <groupId>br.com.jstack.platform</groupId>
         <artifactId>core</artifactId>
-        <version>1.0.85</version>
+        <version>1.0.86</version>
         <relativePath>../core/pom.xml</relativePath>
     </parent>
 
