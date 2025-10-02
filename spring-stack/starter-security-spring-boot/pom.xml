@@ -9,7 +9,7 @@
     </parent>
 
     <!-- Security Spring Boot module -->
-    <name>starter-security-spring-boot</name>
+    <name>JStack Spring Security</name>
     <artifactId>starter-security-spring-boot</artifactId>
     <packaging>pom</packaging>
 
@@ -22,5 +22,36 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>br.com.jstack.platform</groupId>
+            <artifactId>security-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
 
 </project>

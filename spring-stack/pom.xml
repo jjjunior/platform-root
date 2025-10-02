@@ -16,6 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>starter-security-spring-boot</module>
         <module>starter-atomic-jpa-spring-boot</module>
         <module>starter-atomic-neo4j-spring-boot</module>
     </modules>

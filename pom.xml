@@ -20,7 +20,8 @@
         <module>core</module>
         <module>spring-stack</module>
         <module>micronaut-stack</module>
-        <module>spring-stack/starter-security-spring-boot</module>
+<!--        <module>spring-stack/starter-security-spring-boot</module>-->
+        <module>security-core</module>
     </modules>
 
     <repositories>
