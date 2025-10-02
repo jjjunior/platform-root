@@ -3,11 +3,24 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>br.com.jstack.platform</groupId>
-        <artifactId>platform-root</artifactId>
-        <version>1.0.84</version>
-        <relativePath>../../pom.xml</relativePath>
+        <artifactId>spring-stack</artifactId>
+        <version>1.0.85</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
+
+    <!-- Security Spring Boot module -->
+    <name>starter-security-spring-boot</name>
     <artifactId>starter-security-spring-boot</artifactId>
-    <name>Archetype - starter-security-spring-boot</name>
-    <url>http://maven.apache.org</url>
+    <packaging>pom</packaging>
+
+    <!-- Project-wide properties -->
+    <properties>
+        <java.version>25</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    </properties>
+
 </project>
