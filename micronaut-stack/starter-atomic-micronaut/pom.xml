@@ -13,12 +13,16 @@
     </parent>
 
     <artifactId>starter-atomic-micronaut</artifactId>
-    <name>JStack Micronaut Atomic</name>
+    <name>JStack Micronaut Atomic Jpa</name>
     <packaging>pom</packaging>
 
     <properties>
         <!-- Define a classe principal para o Manifest -->
         <mainClass>br.com.jstack.micronaut.atomic.Application</mainClass>
+
+        <maven.compiler.release>25</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <openapi.inputSpec>${project.basedir}/src/main/resources/swagger/openapi.yaml</openapi.inputSpec>
     </properties>
 
@@ -107,36 +111,20 @@
 
     <build>
         <plugins>
-            <!-- Herdados do micronaut-stack -->
-            <plugin>
-                <groupId>io.micronaut.build</groupId>
-                <artifactId>micronaut-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>${mainClass}</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <executions>
                     <execution>
                         <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
+                        <goals><goal>shade</goal></goals>
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>${mainClass}</mainClass>
                                 </transformer>
+                                <!-- mantém o ServicesResourceTransformer do parent -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
                         </configuration>
                     </execution>
@@ -144,6 +132,7 @@
             </plugin>
         </plugins>
     </build>
+
 
     <profiles>
         <profile>

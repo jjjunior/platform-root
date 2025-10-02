@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -12,7 +12,7 @@
 
     <artifactId>micronaut-stack</artifactId>
     <packaging>pom</packaging>
-    <name>JStack Micronaut Stack</name>
+    <name>JStack Micronaut</name>
 
     <properties>
         <java.version>25</java.version>
@@ -120,13 +120,6 @@
                     <version>3.4.2</version>
                 </plugin>
 
-                <!-- Shade Plugin -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.5.0</version>
-                </plugin>
-
                 <!-- OpenAPI Generator -->
                 <plugin>
                     <groupId>org.openapitools</groupId>
@@ -139,6 +132,57 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>3.2.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.5.3</version>
+                    <configuration>
+                        <createDependencyReducedPom>true</createDependencyReducedPom>
+                        <shadedArtifactAttached>true</shadedArtifactAttached>
+                        <shadedClassifierName>all</shadedClassifierName>
+
+                        <!-- Transformers: fundem manifest e service loaders -->
+                        <transformers>
+                            <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
+                            <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                        </transformers>
+
+                        <!-- Filtros para eliminar os avisos citados -->
+                        <filters>
+                            <filter>
+                                <artifact>*:*</artifact>
+                                <excludes>
+                                    <!-- Evita conflito de MANIFEST -->
+                                    <exclude>META-INF/MANIFEST.MF</exclude>
+
+                                    <!-- Evita duplicatas de licenças/avisos -->
+                                    <exclude>META-INF/NOTICE</exclude>
+                                    <exclude>META-INF/NOTICE.*</exclude>
+                                    <exclude>META-INF/NOTICE.md</exclude>
+                                    <exclude>META-INF/NOTICE.txt</exclude>
+                                    <exclude>META-INF/LICENSE</exclude>
+                                    <exclude>META-INF/LICENSE.*</exclude>
+                                    <exclude>META-INF/LICENSE.md</exclude>
+                                    <exclude>META-INF/LICENSE.txt</exclude>
+
+                                    <!-- JPMS: evitar "module-info.class" -->
+                                    <exclude>module-info.class</exclude>
+                                    <exclude>META-INF/versions/*/module-info.class</exclude>
+
+                                    <!-- Arquivo do Netty que causa overlap -->
+                                    <exclude>META-INF/io.netty.versions.properties</exclude>
+
+                                    <!-- Metadados de docs Micronaut/Spring que geram overlap -->
+                                    <exclude>META-INF/config-properties.adoc</exclude>
+                                    <exclude>META-INF/spring-configuration-metadata.json</exclude>
+                                </excludes>
+                            </filter>
+                        </filters>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

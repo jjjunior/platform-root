@@ -13,7 +13,7 @@
     </parent>
 
     <!-- Atomic Spring Boot module -->
-    <name>JStack Spring Atomic</name>
+    <name>JStack Spring Atomic Neo4j</name>
     <artifactId>starter-atomic-neo4j-spring-boot</artifactId>
     <packaging>pom</packaging>
 
