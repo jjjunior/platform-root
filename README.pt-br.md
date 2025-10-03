@@ -1,85 +1,102 @@
-📆 platform-root
+<p align="center">
+  <img src="./.docs/banner.png" alt="JStack Platform Root Banner" width="600"/>
+</p>
 
-Bem-vindo ao projeto JStack Platform Root. Este repositório serve como base para todas as stacks tecnológicas utilizadas
-na empresa, incluindo os ecossistemas Spring Boot, Quarkus e Micronaut. Ele fornece o gerenciamento centralizado de
-dependências e plugins por meio de herança de POM no Maven.
+<h1 align="center">JStack Platform Root</h1>
+<p align="center">
+  Fundação para as stacks <b>Spring Boot</b>, <b>Quarkus</b> e <b>Micronaut</b>.<br/>
+  Gerenciamento centralizado de dependências e plugins com Maven BOM.
+</p>
 
-📁 Estrutura do Projeto
-platform-root/
-├── platform-core/ # BOM centralizado e dependências compartilhadas
-│ └── starter-atomic-spring-boot/ # Módulo inicial minimalista para Spring Boot
-│
-├── spring-stack/ # (Comentado) Módulos de orquestração/eventos para Spring
-├── quarkus-stack/ # (Comentado) Módulos iniciais para Quarkus
-├── micronaut-stack/ # (Comentado) Módulos iniciais para Micronaut
 
-🚀 Objetivos Principais
-• ✅ Centralizar o gerenciamento de dependências e versões via BOM (platform-core)
-• ✅ Fornecer projetos iniciais reutilizáveis (ex: starter-atomic-spring-boot)
-• ✅ Acelerar o desenvolvimento entre diferentes stacks (Spring, Quarkus, Micronaut)
-• ✅ Simplificar a publicação utilizando o AWS CodeArtifact
+<p align="center">
+  <a href="https://adoptium.net/"><img src="https://img.shields.io/badge/Java-25-blue.svg?logo=java&style=flat-square"></a>
+  <a href="https://maven.apache.org/"><img src="https://img.shields.io/badge/Maven-3.8+-orange.svg?logo=apachemaven&style=flat-square"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square"></a>
+</p>
 
-🧰 Módulos
+---
+## 📁 Estrutura do Projeto
 
-1. platform-root
+``` text
+.
+├── core
+├── micronaut-stack
+│   └── starter-atomic-micronaut
+├── security-core
+├── quarkus-stack
+│   └── starter-atomic-quarkus
+└── spring-stack
+    ├── starter-atomic-jpa-spring-boot
+    ├── starter-atomic-neo4j-spring-boot
+    └── starter-security-spring-boot
+```
 
-Agregador pai que organiza todos os módulos de stack e gerencia o deploy para o CodeArtifact.
+🚀 **Objetivos Principais**
 
-2. platform-core
+-   Centralizar o gerenciamento de dependências e versões via BOM
+    (**platform-core**)
+-   Fornecer projetos inicializadores reutilizáveis
+    (**starter-atomic-spring-boot**)
+-   Acelerar o desenvolvimento em diferentes stacks (Spring, Quarkus,
+    Micronaut)
+-   Simplificar a publicação de artefatos no AWS CodeArtifact
 
-Define os BOMs (Bill Of Materials) para Spring Boot, Quarkus, Micronaut e dependências compartilhadas:
-• spring-boot-dependencies
-• quarkus-bom
-• micronaut-platform
+🧰 **Módulos**
+
+🔹 **platform-root**\
+Agregador pai que organiza todos os módulos e gerencia o deploy para o
+CodeArtifact.
+
+🔹 **platform-core**\
+Define os BOMs para Spring Boot, Quarkus e Micronaut, além de
+dependências compartilhadas:\
+• spring-boot-dependencies\
+• quarkus-bom\
+• micronaut-platform\
 • Kafka, Prometheus, Commons Lang, Jackson Nullable, JUnit 5, SpringDoc
 
-3. starter-atomic-spring-boot
+🔹 **starter-atomic-spring-boot**\
+Projeto inicial minimalista para Spring Boot incluindo:\
+• Web, Validation, JPA, Actuator\
+• Liquibase + PostgreSQL\
+• OpenAPI (SpringDoc + OpenAPI Generator)\
+• Logging em JSON com Logback (Logstash)
 
-Projeto inicial minimalista para serviços Spring Boot, incluindo:
-• Web, Validation, JPA, Actuator
-• Liquibase, PostgreSQL
-• OpenAPI via SpringDoc e geração de código via OpenAPI Generator
-• Logs JSON com Logback (Logstash)
+🛠 **Uso**
 
-🛠 Como Usar
+**Pré-requisitos**\
+\* Java 25\
+\* Maven 3.8+
 
-Pré-requisitos
-• Java 21
-• Maven 3.8+
+**Construir todos os módulos**
 
-Compilar os módulos
-
-```bash
+``` bash
 mvn clean install
 ```
 
-Publicar no AWS CodeArtifact
+**Publicar no AWS CodeArtifact**
 
-```bash
+``` bash
 mvn deploy
 ```
 
-🔧 Geração de Código OpenAPI
+**Gerar Código a partir do OpenAPI**\
+O módulo `starter-atomic-spring-boot` inclui um perfil Maven para gerar
+automaticamente código a partir de um arquivo YAML OpenAPI:
 
-O módulo starter-atomic-spring-boot inclui um perfil Maven para gerar código automaticamente a partir de um arquivo YAML
-do OpenAPI:
-
-```bash
+``` bash
 mvn clean install -Popenapi-autogen
 ```
 
-📦 Publicação no CodeArtifact
+Isso gera modelos, interfaces de controladores e classes de configuração
+em\
+`target/generated-sources/openapi`.
 
-Todos os módulos estão configurados para publicar artefatos em:
-
+📦 **Repositório de Artefatos**\
+Os módulos serão publicados no repositório CodeArtifact configurado:\
 https://jstack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/br.com.jstack.platform/
 
-🌐 Documentação
-• 🌟 English (este arquivo)
-• 🇧🇷 Português
-
----
-
-📄 Licença
-
-Proprietário - Uso Interno (JStack / Fundação Tech)
+📄 **Licença**\
+Este projeto está licenciado sob a Licença MIT -- veja o arquivo LICENSE
+para mais detalhes.
