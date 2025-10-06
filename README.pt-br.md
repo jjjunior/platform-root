@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="./.docs/banner.png" alt="JStack Platform Root Banner" width="600"/>
+  <img src="./.docs/banner.jpg" alt="LuminiStack Platform Root Banner" width="600"/>
 </p>
 
-<h1 align="center">JStack Platform Root</h1>
+<h1 align="center">LuminiStack Platform Root</h1>
 <p align="center">
   Fundação para as stacks <b>Spring Boot</b>, <b>Quarkus</b> e <b>Micronaut</b>.<br/>
   Gerenciamento centralizado de dependências e plugins com Maven BOM.
