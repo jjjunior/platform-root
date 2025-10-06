@@ -126,10 +126,44 @@ jobs:
           git add -A
           git commit -m "ci: bump version to ${{ steps.bump.outputs.new_version }}" || echo "No changes to commit"
           git push origin master || echo "Nothing to push"
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1         # <-- fixe a região
+
+      - name: Get CodeArtifact token (us-east-1)
+        id: ca
+        run: |
+          set -e
+          TOKEN=$(aws codeartifact get-authorization-token \
+            --domain luministack \
+            --domain-owner 148206343556 \
+            --region us-east-1 \
+            --query authorizationToken --output text)
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Write ~/.m2/settings.xml (server id igual ao POM)
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<XML
+          <settings>
+            <servers>
+              <server>
+                <id>luministack-repository</id>
+                <username>aws</username>
+                <password>${{ steps.ca.outputs.token }}</password>
+              </server>
+            </servers>
+          </settings>
+          XML
 
       - name: Build (clean + install)
         run: mvn -B clean install -DskipTests
 
       # Com distributionManagement configurado, basta `mvn deploy`
-      - name: Deploy to Luministack repository
-        run: mvn -B -U -DskipTests deploy
+      - name: Deploy (debug)
+        run: |
+          mvn -B -U -DskipTests \
+            -DaltDeploymentRepository=luministack-repository::default::https://luministack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/repository/ \
+            deploy -X
