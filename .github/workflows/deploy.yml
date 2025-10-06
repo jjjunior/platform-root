@@ -60,23 +60,52 @@ jobs:
           XML
           echo "CODEARTIFACT_AUTH_TOKEN=${{ steps.ca.outputs.token }}" >> $GITHUB_ENV
 
-      # Bump de versão ANTES do build para que install+deploy usem a nova versão
-      - name: Increment patch version
+      - name: Increment patch version (robusto)
         id: bump
         shell: bash
         run: |
-          CURRENT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+          set -e
+
+          # 1) Lê a versão do POM (raiz do projeto)
+          RAW_VERSION=$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)
+          echo "RAW_VERSION=$RAW_VERSION"
+
+          # 2) Normaliza: remove qualquer sufixo (-SNAPSHOT, -RC1, etc.)
+          #    Fica só "X.Y" ou "X.Y.Z"
+          BASE_VERSION=$(echo "$RAW_VERSION" | sed 's/-.*$//')
+          echo "BASE_VERSION=$BASE_VERSION"
+
+          # 3) Garante que temos MAJOR.MINOR.PATCH (se faltar PATCH, assume 0)
+          if [[ "$BASE_VERSION" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            MAJOR="${BASH_REMATCH[1]}"
+            MINOR="${BASH_REMATCH[2]}"
+            PATCH="${BASH_REMATCH[3]}"
+          elif [[ "$BASE_VERSION" =~ ^([0-9]+)\.([0-9]+)$ ]]; then
+            MAJOR="${BASH_REMATCH[1]}"
+            MINOR="${BASH_REMATCH[2]}"
+            PATCH="0"
+          else
+            echo "Formato de versão inesperado: $RAW_VERSION"
+            exit 2
+          fi
+
+          # 4) Incrementa patch
           NEW_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
-          mvn -B versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false
-          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "Bumped: $CURRENT_VERSION -> $NEW_VERSION"
+          echo "NEW_VERSION=$NEW_VERSION"
+
+          # 5) Aplica a nova versão em todos os módulos sem criar backup POMs
+          mvn -B versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false -DprocessAllModules=true
+
+          # 6) Exporta para próximos steps
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Bumped: $RAW_VERSION -> $NEW_VERSION"
 
       - name: Commit new version (pom.xml) to master
+        shell: bash
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add pom.xml
+          git add -A
           git commit -m "ci: bump version to ${{ steps.bump.outputs.new_version }}" || echo "No changes to commit"
           git push origin master || echo "Nothing to push"
 
