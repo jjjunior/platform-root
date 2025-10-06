@@ -4,15 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>br.com.jstack.platform</groupId>
+        <groupId>io.luministack.platform</groupId>
         <artifactId>core</artifactId>
-        <version>1.0.86</version>
+        <version>0.0.1</version>
         <relativePath>../core/pom.xml</relativePath>
     </parent>
 
     <artifactId>micronaut-stack</artifactId>
     <packaging>pom</packaging>
-    <name>JStack Micronaut</name>
+    <name>LuminiStack Micronaut</name>
 
     <properties>
         <java.version>25</java.version>

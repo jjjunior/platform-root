@@ -4,12 +4,12 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>br.com.jstack.platform</groupId>
+    <groupId>io.luministack.platform</groupId>
     <artifactId>platform-root</artifactId>
-    <version>1.0.86</version>
+    <version>0.0.1</version>
     <packaging>pom</packaging>
 
-    <name>JStack Platform</name>
+    <name>LuminiStack Platform</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -39,18 +39,18 @@
         </repository>
 
         <repository>
-            <id>jstack-br.com.jstack.platform</id>
-            <name>JStack CodeArtifact Maven repository</name>
-            <url>https://jstack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/br.com.jstack.platform/</url>
+            <name>LuminiStack CodeArtifact Maven repository</name>
+            <id>luministack-repository</id>
+            <url>https://luministack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/repository/</url>
         </repository>
 
     </repositories>
 
     <distributionManagement>
         <repository>
-            <id>jstack-br.com.jstack.platform</id>
-            <name>JStack CodeArtifact Maven repository</name>
-            <url>https://jstack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/br.com.jstack.platform/</url>
+            <name>LuminiStack CodeArtifact Maven repository</name>
+            <id>luministack-repository</id>
+            <url>https://luministack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/repository/</url>
         </repository>
     </distributionManagement>
 

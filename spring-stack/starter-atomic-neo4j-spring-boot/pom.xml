@@ -6,14 +6,14 @@
 
     <!-- Parent POM from JStack Platform -->
     <parent>
-        <groupId>br.com.jstack.platform</groupId>
+        <groupId>io.luministack.platform</groupId>
         <artifactId>spring-stack</artifactId>
-        <version>1.0.86</version>
+        <version>0.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <!-- Atomic Spring Boot module -->
-    <name>JStack Spring Atomic Neo4j</name>
+    <name>LuminiStack Spring Atomic Neo4j</name>
     <artifactId>starter-atomic-neo4j-spring-boot</artifactId>
     <packaging>pom</packaging>
 

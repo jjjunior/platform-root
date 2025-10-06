@@ -4,15 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>br.com.jstack.platform</groupId>
+        <groupId>io.luministack.platform</groupId>
         <artifactId>platform-root</artifactId>
-        <version>1.0.86</version>
+        <version>0.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>security-core</artifactId>
     <packaging>jar</packaging>
-    <name>JStack Security Core</name>
+    <name>LuminiStack Security Core</name>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>

@@ -2,14 +2,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>br.com.jstack.platform</groupId>
+        <groupId>io.luministack.platform</groupId>
         <artifactId>spring-stack</artifactId>
-        <version>1.0.86</version>
+        <version>0.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <!-- Security Spring Boot module -->
-    <name>JStack Spring Security</name>
+    <name>LuminiStack Spring Security</name>
     <artifactId>starter-security-spring-boot</artifactId>
     <packaging>pom</packaging>
 
