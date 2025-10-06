@@ -3,7 +3,6 @@ name: Deploy to AWS CodeArtifact
 on:
   push:
     branches: [ "master" ]
-  # opcional: executar manualmente
   # workflow_dispatch: {}
 
 permissions:
