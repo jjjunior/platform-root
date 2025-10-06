@@ -131,5 +131,5 @@ jobs:
         run: mvn -B clean install -DskipTests
 
       # Com distributionManagement configurado, basta `mvn deploy`
-      - name: Deploy to CodeArtifact
+      - name: Deploy to Luministack repository
         run: mvn -B -U -DskipTests deploy
