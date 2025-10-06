@@ -126,14 +126,14 @@ jobs:
           git add -A
           git commit -m "ci: bump version to ${{ steps.bump.outputs.new_version }}" || echo "No changes to commit"
           git push origin master || echo "Nothing to push"
+
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: us-east-1         # <-- fixe a região
+          aws-region: us-east-1
 
       - name: Get CodeArtifact token (us-east-1)
-        id: ca
         run: |
           set -e
           TOKEN=$(aws codeartifact get-authorization-token \
