@@ -60,60 +60,55 @@ jobs:
           XML
           echo "CODEARTIFACT_AUTH_TOKEN=${{ steps.ca.outputs.token }}" >> $GITHUB_ENV
 
-      - name: Increment patch version (robusto, suporta ${revision})
+      - name: Increment patch version (robusto por XML)
         id: bump
         shell: bash
         run: |
           set -euo pipefail
 
-          # --- Helpers ---
-          get_version () {
-            local expr="$1"
-            mvn -q --non-recursive -DforceStdout help:evaluate -Dexpression="$expr" 2>/dev/null \
-              | grep -E '^[0-9]+(\.[0-9]+){1,2}(-SNAPSHOT|-RC[0-9]+)?$' || true
-          }
+          sudo apt-get update -y >/dev/null 2>&1
+          sudo apt-get install -y libxml2-utils >/dev/null 2>&1
 
-          RAW_VERSION="$(get_version project.version)"
-          if [[ -z "${RAW_VERSION}" || "${RAW_VERSION}" == *'${'* ]]; then
-            RAW_VERSION="$(get_version revision)"
-          fi
-          if [[ -z "${RAW_VERSION}" || "${RAW_VERSION}" == *'${'* ]]; then
-            RAW_VERSION="$(get_version project.parent.version)"
-          fi
-          if [[ -z "${RAW_VERSION}" ]]; then
-            echo "Não consegui resolver a versão do projeto (project.version/revision)."
-            echo "Dica: se usa CI-Friendly (<version>\${revision}</version>), garanta que a property <revision> exista no pom."
-            exit 2
+          # Lê <version> do POM
+          VERSION_NODE=$(xmllint --xpath 'string(/*[local-name()="project"]/*[local-name()="version"])' pom.xml 2>/dev/null || true)
+
+          # Se for CI-friendly (${revision}) ou vazio, lê <properties><revision>
+          if [[ -z "${VERSION_NODE}" || "${VERSION_NODE}" == *'${'* ]]; then
+            VERSION_NODE=$(xmllint --xpath 'string(/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="revision"])' pom.xml 2>/dev/null || true)
+            [[ -z "$VERSION_NODE" ]] && { echo "Não achei versão no pom (version/revision)."; exit 2; }
+            USING_REVISION=true
+          else
+            USING_REVISION=false
           fi
 
-          echo "RAW_VERSION=$RAW_VERSION"
+          echo "RAW_VERSION=$VERSION_NODE"
 
-          # remove sufixos (-SNAPSHOT, -RCx) só para matem.
-          BASE_VERSION="$(echo "$RAW_VERSION" | sed 's/-.*$//')"
-          # normaliza X.Y -> X.Y.0
+          # Remove sufixos (-SNAPSHOT, -RCx, etc.) só para a aritmética
+          BASE_VERSION=$(echo "$VERSION_NODE" | sed 's/-.*$//')
+          echo "BASE_VERSION=$BASE_VERSION"
+
+          # Aceita X.Y[.Z], assumindo patch=0 se faltar
           if [[ "$BASE_VERSION" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
             MAJOR="${BASH_REMATCH[1]}"; MINOR="${BASH_REMATCH[2]}"; PATCH="${BASH_REMATCH[3]}"
           elif [[ "$BASE_VERSION" =~ ^([0-9]+)\.([0-9]+)$ ]]; then
             MAJOR="${BASH_REMATCH[1]}"; MINOR="${BASH_REMATCH[2]}"; PATCH="0"
           else
-            echo "Formato inesperado de versão: $RAW_VERSION"
+            echo "Formato inesperado de versão: $VERSION_NODE"
             exit 3
           fi
 
           NEW_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
           echo "NEW_VERSION=$NEW_VERSION"
 
-          # Detecta se o projeto usa <version>${revision}</version>
-          VERSION_DECL="$(xmllint --xpath '/*[local-name()="project"]/*[local-name()="version"]/text()' pom.xml 2>/dev/null || true)"
-          if [[ "$VERSION_DECL" == '${revision}' ]]; then
-            # CI-Friendly: atualiza a property "revision"
+          if [[ "$USING_REVISION" == true ]]; then
+            # Atualiza a property 'revision' em todos os módulos
             mvn -B versions:set-property \
               -Dproperty=revision \
               -DnewVersion="$NEW_VERSION" \
               -DgenerateBackupPoms=false \
               -DprocessAllModules=true
           else
-            # padrão: atualiza <version> de todos módulos
+            # Atualiza <version> em todos os módulos
             mvn -B versions:set \
               -DnewVersion="$NEW_VERSION" \
               -DgenerateBackupPoms=false \
@@ -121,7 +116,7 @@ jobs:
           fi
 
           echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
-          echo "Bumped: $RAW_VERSION -> $NEW_VERSION"
+          echo "Bumped: $VERSION_NODE -> $NEW_VERSION"
 
       - name: Commit new version (pom.xml) to master
         shell: bash
