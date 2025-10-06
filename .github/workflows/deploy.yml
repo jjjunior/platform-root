@@ -60,43 +60,66 @@ jobs:
           XML
           echo "CODEARTIFACT_AUTH_TOKEN=${{ steps.ca.outputs.token }}" >> $GITHUB_ENV
 
-      - name: Increment patch version (robusto)
+      - name: Increment patch version (robusto, suporta ${revision})
         id: bump
         shell: bash
         run: |
-          set -e
+          set -euo pipefail
 
-          # 1) Lê a versão do POM (raiz do projeto)
-          RAW_VERSION=$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)
-          echo "RAW_VERSION=$RAW_VERSION"
+          # --- Helpers ---
+          get_version () {
+            local expr="$1"
+            mvn -q --non-recursive -DforceStdout help:evaluate -Dexpression="$expr" 2>/dev/null \
+              | grep -E '^[0-9]+(\.[0-9]+){1,2}(-SNAPSHOT|-RC[0-9]+)?$' || true
+          }
 
-          # 2) Normaliza: remove qualquer sufixo (-SNAPSHOT, -RC1, etc.)
-          #    Fica só "X.Y" ou "X.Y.Z"
-          BASE_VERSION=$(echo "$RAW_VERSION" | sed 's/-.*$//')
-          echo "BASE_VERSION=$BASE_VERSION"
-
-          # 3) Garante que temos MAJOR.MINOR.PATCH (se faltar PATCH, assume 0)
-          if [[ "$BASE_VERSION" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-            MAJOR="${BASH_REMATCH[1]}"
-            MINOR="${BASH_REMATCH[2]}"
-            PATCH="${BASH_REMATCH[3]}"
-          elif [[ "$BASE_VERSION" =~ ^([0-9]+)\.([0-9]+)$ ]]; then
-            MAJOR="${BASH_REMATCH[1]}"
-            MINOR="${BASH_REMATCH[2]}"
-            PATCH="0"
-          else
-            echo "Formato de versão inesperado: $RAW_VERSION"
+          RAW_VERSION="$(get_version project.version)"
+          if [[ -z "${RAW_VERSION}" || "${RAW_VERSION}" == *'${'* ]]; then
+            RAW_VERSION="$(get_version revision)"
+          fi
+          if [[ -z "${RAW_VERSION}" || "${RAW_VERSION}" == *'${'* ]]; then
+            RAW_VERSION="$(get_version project.parent.version)"
+          fi
+          if [[ -z "${RAW_VERSION}" ]]; then
+            echo "Não consegui resolver a versão do projeto (project.version/revision)."
+            echo "Dica: se usa CI-Friendly (<version>\${revision}</version>), garanta que a property <revision> exista no pom."
             exit 2
           fi
 
-          # 4) Incrementa patch
+          echo "RAW_VERSION=$RAW_VERSION"
+
+          # remove sufixos (-SNAPSHOT, -RCx) só para matem.
+          BASE_VERSION="$(echo "$RAW_VERSION" | sed 's/-.*$//')"
+          # normaliza X.Y -> X.Y.0
+          if [[ "$BASE_VERSION" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            MAJOR="${BASH_REMATCH[1]}"; MINOR="${BASH_REMATCH[2]}"; PATCH="${BASH_REMATCH[3]}"
+          elif [[ "$BASE_VERSION" =~ ^([0-9]+)\.([0-9]+)$ ]]; then
+            MAJOR="${BASH_REMATCH[1]}"; MINOR="${BASH_REMATCH[2]}"; PATCH="0"
+          else
+            echo "Formato inesperado de versão: $RAW_VERSION"
+            exit 3
+          fi
+
           NEW_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
           echo "NEW_VERSION=$NEW_VERSION"
 
-          # 5) Aplica a nova versão em todos os módulos sem criar backup POMs
-          mvn -B versions:set -DnewVersion="$NEW_VERSION" -DgenerateBackupPoms=false -DprocessAllModules=true
+          # Detecta se o projeto usa <version>${revision}</version>
+          VERSION_DECL="$(xmllint --xpath '/*[local-name()="project"]/*[local-name()="version"]/text()' pom.xml 2>/dev/null || true)"
+          if [[ "$VERSION_DECL" == '${revision}' ]]; then
+            # CI-Friendly: atualiza a property "revision"
+            mvn -B versions:set-property \
+              -Dproperty=revision \
+              -DnewVersion="$NEW_VERSION" \
+              -DgenerateBackupPoms=false \
+              -DprocessAllModules=true
+          else
+            # padrão: atualiza <version> de todos módulos
+            mvn -B versions:set \
+              -DnewVersion="$NEW_VERSION" \
+              -DgenerateBackupPoms=false \
+              -DprocessAllModules=true
+          fi
 
-          # 6) Exporta para próximos steps
           echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           echo "Bumped: $RAW_VERSION -> $NEW_VERSION"
 
