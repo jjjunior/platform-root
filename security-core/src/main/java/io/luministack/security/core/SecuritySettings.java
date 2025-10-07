@@ -1,4 +1,4 @@
-package br.com.jstack.security.core;
+package io.luministack.security.core;
 
 import java.util.List;
 
