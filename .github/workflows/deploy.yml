@@ -3,112 +3,113 @@ name: Deploy to AWS CodeArtifact
 on:
   push:
     branches: [ "master" ]
-  # workflow_dispatch: {}
+  workflow_dispatch:
 
 permissions:
   id-token: write
   contents: write
 
+concurrency:
+  group: deploy-master
+  cancel-in-progress: true
+
 jobs:
   publish:
     runs-on: ubuntu-latest
 
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      CA_DOMAIN: luministack
+      CA_DOMAIN_OWNER: "148206343556"
+      CA_REPOSITORY: repository
+      CA_SERVER_ID: luministack-repository
+
     steps:
-      - name: Checkout code
+      - name: Checkout (full)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Java 25 (Temurin)
+      - name: Setup Java 25 (Temurin) + Maven cache
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '25'
+          cache: maven
 
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
-      - name: (Diag) Who am I?
+      - name: (diag) Who am I?
         run: aws sts get-caller-identity
 
-      # Obtem token e escreve settings.xml (sem usar `aws codeartifact login`)
       - name: Get CodeArtifact token
         id: ca
         run: |
+          set -e
           TOKEN=$(aws codeartifact get-authorization-token \
-            --domain luministack \
-            --domain-owner 148206343556 \
+            --domain "${CA_DOMAIN}" \
+            --domain-owner "${CA_DOMAIN_OWNER}" \
             --query authorizationToken --output text)
-          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+          echo "CA_TOKEN=$TOKEN" >> "$GITHUB_ENV"
 
-      - name: Configure Maven settings.xml for CodeArtifact (server id = codeartifact)
+      - name: Write ~/.m2/settings.xml (server id = ${CA_SERVER_ID})
         run: |
           mkdir -p ~/.m2
-          cat > ~/.m2/settings.xml <<'XML'
+          cat > ~/.m2/settings.xml <<XML
           <settings>
             <servers>
               <server>
-                <id>luministack-repository</id>
+                <id>${{ env.CA_SERVER_ID }}</id>
                 <username>aws</username>
-                <password>${env.CODEARTIFACT_AUTH_TOKEN}</password>
+                <password>\${env.CA_TOKEN}</password>
               </server>
             </servers>
           </settings>
           XML
-          echo "CODEARTIFACT_AUTH_TOKEN=${{ steps.ca.outputs.token }}" >> $GITHUB_ENV
 
-      - name: Increment patch version (robusto por XML)
+      - name: Increment patch version (version ou revision)
         id: bump
         shell: bash
         run: |
           set -euo pipefail
-
           sudo apt-get update -y >/dev/null 2>&1
           sudo apt-get install -y libxml2-utils >/dev/null 2>&1
 
-          # Lê <version> do POM
+          # 1) Lê versão do POM
           VERSION_NODE=$(xmllint --xpath 'string(/*[local-name()="project"]/*[local-name()="version"])' pom.xml 2>/dev/null || true)
-
-          # Se for CI-friendly (${revision}) ou vazio, lê <properties><revision>
           if [[ -z "${VERSION_NODE}" || "${VERSION_NODE}" == *'${'* ]]; then
             VERSION_NODE=$(xmllint --xpath 'string(/*[local-name()="project"]/*[local-name()="properties"]/*[local-name()="revision"])' pom.xml 2>/dev/null || true)
-            [[ -z "$VERSION_NODE" ]] && { echo "Não achei versão no pom (version/revision)."; exit 2; }
+            [[ -z "$VERSION_NODE" ]] && { echo "Não achei versão (version/revision)."; exit 2; }
             USING_REVISION=true
           else
             USING_REVISION=false
           fi
-
           echo "RAW_VERSION=$VERSION_NODE"
 
-          # Remove sufixos (-SNAPSHOT, -RCx, etc.) só para a aritmética
+          # 2) Normaliza e incrementa
           BASE_VERSION=$(echo "$VERSION_NODE" | sed 's/-.*$//')
-          echo "BASE_VERSION=$BASE_VERSION"
-
-          # Aceita X.Y[.Z], assumindo patch=0 se faltar
           if [[ "$BASE_VERSION" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
             MAJOR="${BASH_REMATCH[1]}"; MINOR="${BASH_REMATCH[2]}"; PATCH="${BASH_REMATCH[3]}"
           elif [[ "$BASE_VERSION" =~ ^([0-9]+)\.([0-9]+)$ ]]; then
             MAJOR="${BASH_REMATCH[1]}"; MINOR="${BASH_REMATCH[2]}"; PATCH="0"
           else
-            echo "Formato inesperado de versão: $VERSION_NODE"
-            exit 3
+            echo "Formato inesperado: $VERSION_NODE"; exit 3
           fi
-
           NEW_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
           echo "NEW_VERSION=$NEW_VERSION"
 
+          # 3) Aplica
           if [[ "$USING_REVISION" == true ]]; then
-            # Atualiza a property 'revision' em todos os módulos
             mvn -B versions:set-property \
               -Dproperty=revision \
               -DnewVersion="$NEW_VERSION" \
               -DgenerateBackupPoms=false \
               -DprocessAllModules=true
           else
-            # Atualiza <version> em todos os módulos
             mvn -B versions:set \
               -DnewVersion="$NEW_VERSION" \
               -DgenerateBackupPoms=false \
@@ -118,52 +119,25 @@ jobs:
           echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
           echo "Bumped: $VERSION_NODE -> $NEW_VERSION"
 
-      - name: Commit new version (pom.xml) to master
-        shell: bash
+      - name: Commit bumped version
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "ci: bump version to ${{ steps.bump.outputs.new_version }}" || echo "No changes to commit"
-          git push origin master || echo "Nothing to push"
-
-      - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: us-east-1
-
-      - name: Get CodeArtifact token (us-east-1)
-        run: |
-          set -e
-          TOKEN=$(aws codeartifact get-authorization-token \
-            --domain luministack \
-            --domain-owner 148206343556 \
-            --region us-east-1 \
-            --query authorizationToken --output text)
-          echo "token=$TOKEN" >> $GITHUB_OUTPUT
-
-      - name: Write ~/.m2/settings.xml (server id igual ao POM)
-        run: |
-          mkdir -p ~/.m2
-          cat > ~/.m2/settings.xml <<XML
-          <settings>
-            <servers>
-              <server>
-                <id>luministack-repository</id>
-                <username>aws</username>
-                <password>${{ steps.ca.outputs.token }}</password>
-              </server>
-            </servers>
-          </settings>
-          XML
+          git commit -m "ci: bump version to ${{ steps.bump.outputs.new_version }}" || echo "No changes"
+          git push origin HEAD:master || echo "Nothing to push"
 
       - name: Build (clean + install)
         run: mvn -B clean install -DskipTests
 
-      # Com distributionManagement configurado, basta `mvn deploy`
-      - name: Deploy (debug)
+      # Deploy só no master (redundante com gatilho, mas deixa explícito)
+      - name: Deploy to CodeArtifact
+        if: github.ref == 'refs/heads/master'
+        run: mvn -B -U -DskipTests deploy
+
+      - name: Tag version vX.Y.Z
+        if: success() && github.ref == 'refs/heads/master'
         run: |
-          mvn -B -U -DskipTests \
-            -DaltDeploymentRepository=luministack-repository::default::https://luministack-148206343556.d.codeartifact.us-east-1.amazonaws.com/maven/repository/ \
-            deploy -X
+          TAG="v${{ steps.bump.outputs.new_version }}"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
