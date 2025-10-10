@@ -25,7 +25,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>br.com.jstack.platform</groupId>
+            <groupId>io.luministack.platform</groupId>
             <artifactId>security-core</artifactId>
             <version>${project.version}</version>
         </dependency>
